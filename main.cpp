@@ -54,8 +54,8 @@ int main() {
             }
         }
 
-        for (int i = 0; i < analyzerVector.size(); i++) {
-            SerialPortDataAnalyzer* selectedAnalyzer = analyzerVector[i].first;
+        for (std::pair<SerialPortDataAnalyzer*, std::ofstream>& analyzerPair : analyzerVector) {
+            SerialPortDataAnalyzer* selectedAnalyzer = analyzerPair.first;
             resultPair = selectedAnalyzer->getProcessedData();
             if (resultPair.first == -1) {
                 std::cout << "Processed data from analyzer not available" << std::endl;
@@ -65,7 +65,7 @@ int main() {
                 if (dataDate.length() >= 2)
                     dataDate.back() = '\0';
 
-                analyzerVector[i].second  << dataDate << " , " << resultPair.second << std::endl;
+                analyzerPair.second  << dataDate << " , " << resultPair.second << std::endl;
             }
         }
         
@@ -77,9 +77,9 @@ int main() {
         std::this_thread::sleep_for(sleepTime);
     }
 
-    for (int i = 0; i < analyzerVector.size(); i++) {
-        delete analyzerVector[i].first;
-        analyzerVector[i].second.close();
+    for (std::pair<SerialPortDataAnalyzer*, std::ofstream>& analyzerPair : analyzerVector) {
+        delete analyzerPair.first;
+        analyzerPair.second.close();
     }
     analyzerVector.clear();
     rawDataFile.close();
